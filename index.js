@@ -9,7 +9,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configurare Certificate SSL Client (V3)
-// Acestea vor fi citite din fisierele incarcate sau variabile de mediu
 const certPath = path.join(__dirname, 'v3_cert.pem');
 const keyPath = path.join(__dirname, 'v3_key.pem');
 
@@ -31,7 +30,7 @@ try {
 }
 
 // Endpoint principal pentru trimitere SMS
-// Exemplu apel din Lovable: https://proxy-url.com/send?to=+37369xxxxxx&text=Mesaj
+// Exemplu apel din Lovable: https://ingz.onrender.com/send?to=+37369xxxxxx&text=Mesaj
 app.get('/send', async (req, res) => {
     const { to, text } = req.query;
 
@@ -39,7 +38,7 @@ app.get('/send', async (req, res) => {
         return res.status(400).json({ error: 'Parametrii "to" si "text" sunt obligatorii.' });
     }
 
-    // Parametrii API-ului original Inter-Mob
+    // Parametrii API-ului original Inter-Mob (conform noilor date)
     const params = {
         username: process.env.SMS_USER || 'ingaz',
         password: process.env.SMS_PASSWORD || 'riOL5RG8toj6i1zt',
@@ -48,9 +47,10 @@ app.get('/send', async (req, res) => {
         text: text
     };
 
-    const targetUrl = 'https://prepay.inter-mob.com/messages.php';
+    // NOUL URL furnizat de Dmitri: https://prepay.inter-mob.com/ingaz.asp
+    const targetUrl = 'https://prepay.inter-mob.com/ingaz.asp';
 
-    console.log(`Trimitere SMS catre ${to}...`);
+    console.log(`Trimitere SMS catre ${to} folosind noul endpoint .asp...`);
 
     try {
         const response = await axios.get(targetUrl, {
